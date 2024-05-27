@@ -26,16 +26,7 @@ def callback(current, total):
 # Coroutine to process messages for a given dialog
 async def process_dialog(dialog, tdata, client):
     messages_output = ""
-    if len(dialog.name) < 1:
-        try:
-            if dialog.id:
-                dialog_name = str(dialog.id)
-            else:
-                dialog_name = f"{dialog.name}_{random.randint(111, 999)}"
-        except:
-            dialog_name = f"{dialog.name}_{random.randint(111, 999)}"
-    else:
-        dialog_name = dialog.name
+    dialog_name = str(dialog.id)
 
     if not os.path.exists(os.path.join(tdata, dialog_name)):
         os.mkdir(os.path.join(tdata, dialog_name))
@@ -54,10 +45,7 @@ async def process_dialog(dialog, tdata, client):
     # Iterate over messages in the dialog and download any media attachments
     messages = client.iter_messages(dialog, limit=LIMIT)
     async for message in messages:
-        if message.sender.first_name:
-            file_ = f"{os.path.join(tdata, dialog_name, message.sender.first_name + '_' + message.date.strftime('%Y%m%d_%H%M%S'))}"
-        else:
-            file_ = f"{os.path.join(tdata, dialog_name, str(message.sender.id) + '_' + message.date.strftime('%Y%m%d_%H%M%S'))}"
+        file_ = f"{os.path.join(tdata, dialog_name, str(message.sender.id) + '_' + message.date.strftime('%Y%m%d_%H%M%S'))}"
 
         if message.video:
             file_name = next((d.file_name for d in message.video.attributes if isinstance(d, DocumentAttributeFilename)), None)
